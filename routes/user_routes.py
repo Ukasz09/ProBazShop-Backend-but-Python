@@ -18,19 +18,19 @@ def users():
         elif request.method == 'GET':
             return jsonify(user_controller.find_all(request.args))
         else:
-            return jsonify(item_controller.delete_all())
+            return jsonify(user_controller.delete_all())
     except InvalidUsage as e:
         raise e
     except Exception as e:
         raise InvalidUsage('Database connection error', 500)
 
 
-@app.route('/user/<user_id>', methods=['GET', 'PUT', 'DELETE'])
+@app.route('/users/<user_id>', methods=['GET', 'PUT', 'DELETE'])
 @cross_origin()
-def user_by_id(item_id: str):
+def user_by_id(user_id: str):
     try:
         if request.method == 'GET':
-            result = item_controller.find(item_id)
+            result = user_controller.find(user_id)
             if result:
                 return jsonify(result)
             else:
@@ -39,13 +39,13 @@ def user_by_id(item_id: str):
             errors = schema_validator.validate_data(request, schema_validator.ItemValidator)
             if errors is not None:
                 raise InvalidUsage(errors)
-            result = item_controller.update(item_id, request.json)
+            result = item_controller.update(user_id, request.json)
             if result:
                 return jsonify(result)
             else:
                 return {"message": "Not found item with given ID"}, 404
         else:
-            result = item_controller.delete(item_id)
+            result = item_controller.delete(user_id)
             if result:
                 return jsonify(result)
             else:

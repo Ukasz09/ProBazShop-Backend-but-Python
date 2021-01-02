@@ -68,7 +68,7 @@ def delete_all() -> Optional[Dict[str, str]]:
     return {'message': 'Deleted count: {count}'.format(count=result.deleted_count)}
 
 
-def find(item_id):
+def find(item_id:str):
     try:
         id = ObjectId(item_id)
     except Exception:

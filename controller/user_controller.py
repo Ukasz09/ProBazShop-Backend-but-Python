@@ -23,3 +23,23 @@ def find_all(query_args: Dict[str, Any]) -> Optional[List[Dict[str, Any]]]:
         item['id'] = str(item['_id'])
         del item['_id']
     return result
+
+
+def delete_all() -> Optional[Dict[str, str]]:
+    result = dbconn.users_collection.delete_many({})
+    return {'message': 'Deleted count: {count}'.format(count=result.deleted_count)}
+
+
+def find(user_id: str):
+    try:
+        id = ObjectId(user_id)
+    except Exception:
+        return None
+    cursor = dbconn.users_collection.find({'_id': id})
+    result = list(cursor)
+    if len(result) == 0:
+        return None
+    item = result[0]
+    item['id'] = user_id
+    del item['_id']
+    return item

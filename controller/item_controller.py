@@ -3,30 +3,25 @@ import pymongo
 import dbconn
 from model.schema import *
 from controller.utils import *
+from bson.objectid import ObjectId
 
 
 def create(request: Dict[str, Any]) -> Optional[Dict[str, str]]:
     item = create_model_from_request(item_schema, request)
-    try:
-        result = dbconn.items_collection.insert_one(item)
-        del item['_id']
-        item['id'] = str(result.inserted_id)
-        return item
-    except Exception as e:
-        return None
+    result = dbconn.items_collection.insert_one(item)
+    del item['_id']
+    item['id'] = str(result.inserted_id)
+    return item
 
 
 def find_all(query_args: Dict[str, Any]) -> Optional[List[Dict[str, Any]]]:
-    try:
-        db_query, sort_param, sort_direction = _parse_find_query(query_args)
-        result = []
-        result += dbconn.items_collection.find(db_query).sort(sort_param, sort_direction)
-        for item in result:
-            item['id'] = str(item['_id'])
-            del item['_id']
-        return result
-    except Exception as e:
-        return None
+    db_query, sort_param, sort_direction = _parse_find_query(query_args)
+    result = []
+    result += dbconn.items_collection.find(db_query).sort(sort_param, sort_direction)
+    for item in result:
+        item['id'] = str(item['_id'])
+        del item['_id']
+    return result
 
 
 def _parse_find_query(query_args: Dict[str, Any]) -> (Dict[str, Any], str, int):
@@ -69,8 +64,20 @@ def _parse_find_query(query_args: Dict[str, Any]) -> (Dict[str, Any], str, int):
 
 
 def delete_all() -> Optional[Dict[str, str]]:
+    result = dbconn.items_collection.delete_many({})
+    return {'message': 'Deleted count: {count}'.format(count=result.deleted_count)}
+
+
+def find(item_id):
     try:
-        result = dbconn.items_collection.delete_many({})
-        return {'message': 'Deleted count: {count}'.format(count=result.deleted_count)}
-    except Exception as e:
+        id = ObjectId(item_id)
+    except Exception:
         return None
+    cursor = dbconn.items_collection.find({'_id': id})
+    result = list(cursor)
+    if len(result) == 0:
+        return None
+    item = result[0]
+    item['id'] = item_id
+    del item['_id']
+    return item

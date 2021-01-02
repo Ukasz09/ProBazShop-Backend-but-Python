@@ -3,7 +3,7 @@ from flask_cors import cross_origin
 from app import app
 from controller import user_controller
 from model import schema_validator
-from routes.item_routes import InvalidUsage
+from controller.error_handler import InvalidUsage
 
 
 @app.route('/api/users', methods=['GET', 'POST', 'DELETE'])

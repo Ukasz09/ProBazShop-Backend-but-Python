@@ -3,6 +3,7 @@ from flask_cors import cross_origin
 from app import app
 from controller import item_controller
 from model import schema_validator
+from controller.error_handler import InvalidUsage
 
 
 @app.route('/api/items', methods=['GET', 'POST', 'DELETE'])
@@ -59,27 +60,3 @@ def item_by_id(item_id: str):
 @cross_origin()
 def categories():
     return jsonify(item_controller.get_categories())
-
-
-########################################################################################################################
-class InvalidUsage(Exception):
-    status_code = 400
-
-    def __init__(self, description, code=None, payload=None):
-        Exception.__init__(self)
-        self.description = description
-        if code is not None:
-            self.status_code = code
-        self.payload = payload
-
-    def to_dict(self):
-        rv = dict(self.payload or ())
-        rv['message'] = self.description
-        return rv
-
-
-@app.errorhandler(InvalidUsage)
-def handle_invalid_usage(error):
-    response = jsonify(error.to_dict())
-    response.status_code = error.status_code
-    return response

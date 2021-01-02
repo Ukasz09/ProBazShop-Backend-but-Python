@@ -4,7 +4,6 @@ from controller.utils import *
 from bson.objectid import ObjectId
 
 
-# TODO: avoid adding with the same email
 def create(request: Dict[str, Any]) -> Optional[Dict[str, str]]:
     user = create_model_from_request(user_schema, request)
     result = dbconn.users_collection.insert_one(user)
@@ -30,7 +29,7 @@ def delete_all() -> Optional[Dict[str, str]]:
     return {'message': 'Deleted count: {count}'.format(count=result.deleted_count)}
 
 
-def find(user_id: str):
+def find(user_id: str) -> Optional[Dict[str, Any]]:
     try:
         id = ObjectId(user_id)
     except Exception:
@@ -45,7 +44,7 @@ def find(user_id: str):
     return item
 
 
-def update(user_id: str, request: Dict[str, Any]):
+def update(user_id: str, request: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     user = create_model_from_request(user_schema, request)
     try:
         id = ObjectId(user_id)
@@ -63,7 +62,7 @@ def update(user_id: str, request: Dict[str, Any]):
     return result
 
 
-def delete(user_id: str):
+def delete(user_id: str) -> Optional[Dict[str, Any]]:
     try:
         id = ObjectId(user_id)
     except Exception:
@@ -76,7 +75,7 @@ def delete(user_id: str):
     return result
 
 
-def get_history(user_id) -> List[Dict[str, Any]]:
+def get_history(user_id) -> Optional[List[Dict[str, Any]]]:
     try:
         id = ObjectId(user_id)
     except Exception:
@@ -92,7 +91,7 @@ def get_history(user_id) -> List[Dict[str, Any]]:
         return []
 
 
-def login(email: str, password: str):
+def login(email: str, password: str) -> Optional[Dict[str, Any]]:
     cursor = dbconn.users_collection.find({'email': email, 'password': password})
     result = list(cursor)
     if len(result) == 0:

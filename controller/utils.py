@@ -1,8 +1,5 @@
 from typing import *
 
-from bson import json_util
-from flask import json
-
 
 def create_model_from_request(schema, request) -> Dict[str, Any]:
     item_properties = schema['properties'].keys()
@@ -13,11 +10,7 @@ def create_model_from_request(schema, request) -> Dict[str, Any]:
     return item
 
 
-def parse_json(data):
-    return json.loads(json_util.dumps(data))
-
-
-def is_float(value):
+def is_float(value) -> bool:
     try:
         float(value)
         return True

@@ -73,7 +73,7 @@ def delete_all() -> Optional[Dict[str, str]]:
     return {'message': 'Deleted count: {count}'.format(count=result.deleted_count)}
 
 
-def find(item_id: str):
+def find(item_id: str) -> Optional[Dict[str, Any]]:
     try:
         id = ObjectId(item_id)
     except Exception:
@@ -88,7 +88,7 @@ def find(item_id: str):
     return item
 
 
-def update(item_id: str, request: Dict[str, Any]):
+def update(item_id: str, request: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     item = create_model_from_request(item_schema, request)
     try:
         id = ObjectId(item_id)
@@ -106,7 +106,7 @@ def update(item_id: str, request: Dict[str, Any]):
     return result
 
 
-def delete(item_id: str):
+def delete(item_id: str) -> Optional[Dict[str, Any]]:
     try:
         id = ObjectId(item_id)
     except Exception:
@@ -119,6 +119,6 @@ def delete(item_id: str):
     return result
 
 
-def get_categories():
+def get_categories() -> List[str]:
     categories = dbconn.items_collection.find({}).distinct("category")
     return categories

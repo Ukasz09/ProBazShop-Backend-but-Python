@@ -43,3 +43,34 @@ def find(user_id: str):
     item['id'] = user_id
     del item['_id']
     return item
+
+
+def update(user_id: str, request: Dict[str, Any]):
+    user = create_model_from_request(user_schema, request)
+    try:
+        id = ObjectId(user_id)
+    except Exception:
+        return None
+    result = dbconn.users_collection.find_one_and_update(
+        {"_id": id},
+        {"$set": user},
+        upsert=False
+    )
+    if result is None:
+        return result
+    result['id'] = user_id
+    del result['_id']
+    return result
+
+
+def delete(user_id: str):
+    try:
+        id = ObjectId(user_id)
+    except Exception:
+        return None
+    result = dbconn.users_collection.find_one_and_delete({'_id': id})
+    if result is None:
+        return result
+    result['id'] = user_id
+    del result['_id']
+    return result

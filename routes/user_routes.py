@@ -34,34 +34,36 @@ def user_by_id(user_id: str):
             if result:
                 return jsonify(result)
             else:
-                return {"message": "Not found item with given ID"}, 404
+                return {"message": "Not found user with given ID"}, 404
         elif request.method == 'PUT':
-            errors = schema_validator.validate_data(request, schema_validator.ItemValidator)
+            errors = schema_validator.validate_data(request, schema_validator.UserValidator)
             if errors is not None:
                 raise InvalidUsage(errors)
-            result = item_controller.update(user_id, request.json)
+            result = user_controller.update(user_id, request.json)
             if result:
                 return jsonify(result)
             else:
-                return {"message": "Not found item with given ID"}, 404
+                return {"message": "Not found user with given ID"}, 404
         else:
-            result = item_controller.delete(user_id)
+            result = user_controller.delete(user_id)
             if result:
                 return jsonify(result)
             else:
-                return {"message": "Not found item with given ID"}, 404
+                return {"message": "Not found user with given ID"}, 404
     except InvalidUsage as e:
         raise e
     except Exception as e:
         raise InvalidUsage('Database connection error', 500)
 
 
+# TODO: implement
 @app.route('/history/<user_id>', methods=['GET'])
 @cross_origin()
 def history(user_id: str):
     pass
 
 
+# TODO: implement
 @app.route('/login', methods=['GET'])
 @cross_origin()
 def logon():

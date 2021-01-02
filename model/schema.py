@@ -36,7 +36,7 @@ user_schema = {
                           'color': {'type': 'string'},
                           'pricePerItem': {'type': 'number'},
                           'orderedQty': {'type': 'integer'},
-                          'orderDate': {'type': 'date-time'},
+                          'orderDate': {'type': 'string'},
                       },
                       'required': [
                           'name',

@@ -112,3 +112,8 @@ def delete(item_id: str):
     result['id'] = item_id
     del result['_id']
     return result
+
+
+def get_categories():
+    categories = dbconn.items_collection.find({}).distinct("category")
+    return categories

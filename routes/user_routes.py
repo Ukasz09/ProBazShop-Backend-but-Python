@@ -56,15 +56,24 @@ def user_by_id(user_id: str):
         raise InvalidUsage('Database connection error', 500)
 
 
-# TODO: implement
 @app.route('/history/<user_id>', methods=['GET'])
 @cross_origin()
 def history(user_id: str):
-    pass
+    result = user_controller.get_history(user_id)
+    if result is not None:
+        return jsonify(result)
+    else:
+        return {"message": "Not found user with given ID"}, 404
 
 
-# TODO: implement
 @app.route('/login', methods=['GET'])
 @cross_origin()
 def logon():
-    pass
+    if 'email' and 'password' in request.args:
+        result = user_controller.login(request.args['email'], request.args['password'])
+        if result:
+            return jsonify(result)
+        else:
+            return {"message": "Incorrect logon data"}, 401
+    else:
+        return {"message": "You need to pass email and password into query parameters"}, 400

@@ -74,3 +74,30 @@ def delete(user_id: str):
     result['id'] = user_id
     del result['_id']
     return result
+
+
+def get_history(user_id) -> List[Dict[str, Any]]:
+    try:
+        id = ObjectId(user_id)
+    except Exception:
+        return None
+    cursor = dbconn.users_collection.find({'_id': id})
+    result = list(cursor)
+    if len(result) == 0:
+        return None
+    user = result[0]
+    if 'history' in user:
+        return user['history']
+    else:
+        return []
+
+
+def login(email: str, password: str):
+    cursor = dbconn.users_collection.find({'email': email, 'password': password})
+    result = list(cursor)
+    if len(result) == 0:
+        return None
+    user = result[0]
+    user['id'] = str(user['_id'])
+    del user['_id']
+    return user

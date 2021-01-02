@@ -24,7 +24,7 @@ def items():
         raise InvalidUsage('Database connection error', 500)
 
 
-@app.route('/items/<item_id>', methods=['GET', 'PUT'])
+@app.route('/items/<item_id>', methods=['GET', 'PUT', 'DELETE'])
 @cross_origin()
 def item_by_id(item_id: str):
     try:
@@ -44,7 +44,11 @@ def item_by_id(item_id: str):
             else:
                 return {"message": "Not found item with given ID"}, 404
         else:
-            return jsonify(item_controller.delete(item_id))
+            result = item_controller.delete(item_id)
+            if result:
+                return jsonify(result)
+            else:
+                return {"message": "Not found item with given ID"}, 404
     except InvalidUsage as e:
         raise e
     except Exception as e:

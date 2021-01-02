@@ -12,9 +12,12 @@ def items():
         errors = schema_validator.validate_greeting(request, schema_validator.ItemValidator)
         if errors is not None:
             raise InvalidUsage(errors)
-        return jsonify(item_controller.create(request.json))
+        result = item_controller.create(request.json)
+        if result is None:
+            raise InvalidUsage('Database connection error', 500)
+        return jsonify(result)
     elif request.method == 'GET':
-        return jsonify(item_controller.find_all())
+        return jsonify(item_controller.find_all(request.args))
     else:
         return jsonify(item_controller.delete_all())
 

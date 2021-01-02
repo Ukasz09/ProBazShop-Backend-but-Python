@@ -16,7 +16,7 @@ def users():
                 raise InvalidUsage(errors)
             return jsonify(user_controller.create(request.json))
         elif request.method == 'GET':
-            return jsonify(item_controller.find_all(request.args))
+            return jsonify(user_controller.find_all(request.args))
         else:
             return jsonify(item_controller.delete_all())
     except InvalidUsage as e:

@@ -16,14 +16,17 @@ def create(request: Dict[str, Any]) -> Optional[Dict[str, str]]:
         return None
 
 
-def find_all(query_args: Dict[str, Any]) -> List[Dict[str, Any]]:
-    db_query, sort_param, sort_direction = _parse_find_query(query_args)
-    result = []
-    result += dbconn.items_collection.find(db_query).sort(sort_param, sort_direction)
-    for item in result:
-        item['id'] = str(item['_id'])
-        del item['_id']
-    return result
+def find_all(query_args: Dict[str, Any]) -> Optional[List[Dict[str, Any]]]:
+    try:
+        db_query, sort_param, sort_direction = _parse_find_query(query_args)
+        result = []
+        result += dbconn.items_collection.find(db_query).sort(sort_param, sort_direction)
+        for item in result:
+            item['id'] = str(item['_id'])
+            del item['_id']
+        return result
+    except Exception as e:
+        return None
 
 
 def _parse_find_query(query_args: Dict[str, Any]) -> (Dict[str, Any], str, int):
@@ -63,3 +66,11 @@ def _parse_find_query(query_args: Dict[str, Any]) -> (Dict[str, Any], str, int):
         sort_direction = pymongo.ASCENDING if query_args['sort'] == 'asc' else pymongo.DESCENDING
         sort_param = 'price'
     return db_query, sort_param, sort_direction
+
+
+def delete_all() -> Optional[Dict[str, str]]:
+    try:
+        result = dbconn.items_collection.delete_many({})
+        return {'message': 'Deleted count: {count}'.format(count=result.deleted_count)}
+    except Exception as e:
+        return None

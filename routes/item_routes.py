@@ -13,13 +13,13 @@ def items():
         if errors is not None:
             raise InvalidUsage(errors)
         result = item_controller.create(request.json)
-        if result is None:
-            raise InvalidUsage('Database connection error', 500)
-        return jsonify(result)
+        return _return_with_db_conn_validation(result)
     elif request.method == 'GET':
-        return jsonify(item_controller.find_all(request.args))
+        result = item_controller.find_all(request.args)
+        return _return_with_db_conn_validation(result)
     else:
-        return jsonify(item_controller.delete_all())
+        result = item_controller.delete_all()
+        return _return_with_db_conn_validation(result)
 
 
 @app.route('/items/<item_id>', methods=['GET', 'PUT'])
@@ -65,3 +65,9 @@ def handle_invalid_usage(error):
     response = jsonify(error.to_dict())
     response.status_code = error.status_code
     return response
+
+
+def _return_with_db_conn_validation(result):
+    if result is None:
+        raise InvalidUsage('Database connection error', 500)
+    return jsonify(result)

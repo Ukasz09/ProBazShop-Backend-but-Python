@@ -6,7 +6,7 @@ from model import schema_validator
 from routes.item_routes import InvalidUsage
 
 
-@app.route('/users', methods=['GET', 'POST', 'DELETE'])
+@app.route('/api/users', methods=['GET', 'POST', 'DELETE'])
 @cross_origin()
 def users():
     try:
@@ -25,7 +25,7 @@ def users():
         raise InvalidUsage('Database connection error', 500)
 
 
-@app.route('/users/<user_id>', methods=['GET', 'PUT', 'DELETE'])
+@app.route('/api/users/<user_id>', methods=['GET', 'PUT', 'DELETE'])
 @cross_origin()
 def user_by_id(user_id: str):
     try:
@@ -56,7 +56,7 @@ def user_by_id(user_id: str):
         raise InvalidUsage('Database connection error', 500)
 
 
-@app.route('/history/<user_id>', methods=['GET'])
+@app.route('/api/history/<user_id>', methods=['GET'])
 @cross_origin()
 def history(user_id: str):
     result = user_controller.get_history(user_id)
@@ -66,7 +66,7 @@ def history(user_id: str):
         return {"message": "Not found user with given ID"}, 404
 
 
-@app.route('/login', methods=['GET'])
+@app.route('/api/login', methods=['GET'])
 @cross_origin()
 def logon():
     if 'email' and 'password' in request.args:

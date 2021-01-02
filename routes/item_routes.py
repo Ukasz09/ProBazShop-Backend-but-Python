@@ -5,7 +5,7 @@ from controller import item_controller
 from model import schema_validator
 
 
-@app.route('/items', methods=['GET', 'POST', 'DELETE'])
+@app.route('/api/items', methods=['GET', 'POST', 'DELETE'])
 @cross_origin()
 def items():
     try:
@@ -24,7 +24,7 @@ def items():
         raise InvalidUsage('Database connection error', 500)
 
 
-@app.route('/items/<item_id>', methods=['GET', 'PUT', 'DELETE'])
+@app.route('/api/items/<item_id>', methods=['GET', 'PUT', 'DELETE'])
 @cross_origin()
 def item_by_id(item_id: str):
     try:
@@ -55,7 +55,7 @@ def item_by_id(item_id: str):
         raise InvalidUsage('Database connection error', 500)
 
 
-@app.route('/categories', methods=['GET'])
+@app.route('/api/categories', methods=['GET'])
 @cross_origin()
 def categories():
     return jsonify(item_controller.get_categories())

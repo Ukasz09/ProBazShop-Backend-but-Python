@@ -36,22 +36,26 @@ def _parse_find_query(query_args: Dict[str, Any]) -> (Dict[str, Any], str, int):
 
     if 'size' in query_args:
         sizes = query_args['size'].split(',')
-        db_query['size'] = sizes
+        db_query['size'] = {'$in': sizes}
 
-    if 'price_from' in query_args:
-        if 'price_to' in query_args:
-            db_query['price'] = {'$gt': query_args['price_from'], '$lt': query_args['price_to']}
-        else:
-            db_query['price'] = {'$gt': query_args['price_from']}
-    elif 'price_to' in query_args:
-        db_query['price'] = {'$lt': query_args['price_to']}
+    if 'price_from' in query_args and 'price_to' in query_args:
+        if is_float(query_args['price_from']) and is_float(query_args['price_to']):
+            price_from = float(query_args['price_from'])
+            price_to = float(query_args['price_to'])
+            db_query['price'] = {'$gte': price_from, '$lte': price_to}
+    elif 'price_from' in query_args and is_float(query_args['price_from']):
+        price_from = float(query_args['price_from'])
+        db_query['price'] = {'$gte': price_from}
+    elif 'price_to' in query_args and is_float(query_args['price_to']):
+        price_to = float(query_args['price_to'])
+        db_query['price'] = {'$lte': price_to}
 
     if 'color' in query_args:
         colors = query_args['color'].split(',')
         colors_with_hash = []
         for color in colors:
             colors_with_hash.append('#{color}'.format(color=color))
-        db_query['color'] = colors_with_hash
+        db_query['color'] = {'$in': colors_with_hash}
 
     if 'starRating' in query_args:
         db_query['starRating'] = {'$gt': query_args['starRating']}
@@ -60,6 +64,7 @@ def _parse_find_query(query_args: Dict[str, Any]) -> (Dict[str, Any], str, int):
     if 'sort' in query_args:
         sort_direction = pymongo.ASCENDING if query_args['sort'] == 'asc' else pymongo.DESCENDING
         sort_param = 'price'
+    print(db_query)
     return db_query, sort_param, sort_direction
 
 
@@ -68,7 +73,7 @@ def delete_all() -> Optional[Dict[str, str]]:
     return {'message': 'Deleted count: {count}'.format(count=result.deleted_count)}
 
 
-def find(item_id:str):
+def find(item_id: str):
     try:
         id = ObjectId(item_id)
     except Exception:

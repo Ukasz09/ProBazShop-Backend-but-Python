@@ -15,3 +15,11 @@ def create_model_from_request(schema, request) -> Dict[str, Any]:
 
 def parse_json(data):
     return json.loads(json_util.dumps(data))
+
+
+def is_float(value):
+    try:
+        float(value)
+        return True
+    except:
+        return False

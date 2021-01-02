@@ -81,3 +81,21 @@ def find(item_id):
     item['id'] = item_id
     del item['_id']
     return item
+
+
+def update(item_id, request: Dict[str, Any]):
+    item = create_model_from_request(item_schema, request)
+    try:
+        id = ObjectId(item_id)
+    except Exception:
+        return None
+    result = dbconn.items_collection.find_one_and_update(
+        {"_id": id},
+        {"$set": item},
+        upsert=False
+    )
+    if result is None:
+        return result
+    result['id'] = item_id
+    del result['_id']
+    return result

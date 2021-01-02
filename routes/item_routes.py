@@ -10,15 +10,17 @@ from model import schema_validator
 def items():
     try:
         if request.method == 'POST':
-            errors = schema_validator.validate_greeting(request, schema_validator.ItemValidator)
+            errors = schema_validator.validate_data(request, schema_validator.ItemValidator)
             if errors is not None:
                 raise InvalidUsage(errors)
-            return item_controller.create(request.json)
+            return jsonify(item_controller.create(request.json))
         elif request.method == 'GET':
-            return item_controller.find_all(request.args)
+            return jsonify(item_controller.find_all(request.args))
         else:
-            return item_controller.delete_all()
-    except Exception:
+            return jsonify(item_controller.delete_all())
+    except InvalidUsage as e:
+        raise e
+    except Exception as e:
         raise InvalidUsage('Database connection error', 500)
 
 
@@ -33,9 +35,18 @@ def item_by_id(item_id: str):
             else:
                 return {"message": "Not found item with given ID"}, 404
         elif request.method == 'PUT':
-            return jsonify(item_controller.update(item_id))
+            errors = schema_validator.validate_data(request, schema_validator.ItemValidator)
+            if errors is not None:
+                raise InvalidUsage(errors)
+            result = item_controller.update(item_id, request.json)
+            if result:
+                return jsonify(result)
+            else:
+                return {"message": "Not found item with given ID"}, 404
         else:
             return jsonify(item_controller.delete(item_id))
+    except InvalidUsage as e:
+        raise e
     except Exception as e:
         raise InvalidUsage('Database connection error', 500)
 
@@ -50,16 +61,16 @@ def categories():
 class InvalidUsage(Exception):
     status_code = 400
 
-    def __init__(self, message, status_code=None, payload=None):
+    def __init__(self, description, code=None, payload=None):
         Exception.__init__(self)
-        self.message = message
-        if status_code is not None:
-            self.status_code = status_code
+        self.description = description
+        if code is not None:
+            self.status_code = code
         self.payload = payload
 
     def to_dict(self):
         rv = dict(self.payload or ())
-        rv['message'] = self.message
+        rv['message'] = self.description
         return rv
 
 

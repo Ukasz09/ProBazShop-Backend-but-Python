@@ -12,7 +12,7 @@ class UserValidator(Inputs):
     json = [JsonSchema(schema=user_schema)]
 
 
-def validate_greeting(request, validator: Type[Inputs]) -> Optional[List]:
+def validate_data(request, validator: Type[Inputs]) -> Optional[List]:
     inputs = validator(request)
     if inputs.validate():
         return None

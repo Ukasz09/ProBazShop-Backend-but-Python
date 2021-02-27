@@ -2,7 +2,7 @@
 
 ### Description
 
-Backend of online clothes shop. Check-out the front-end <a href="https://github.com/Ukasz09/ProBazShop-Frontend">HERE</a>
+Backend of online clothes shop (Python, Flask, MongoDB). Check-out the front-end <a href="https://github.com/Ukasz09/ProBazShop-Frontend">HERE</a>
 
 ---
 
